@@ -68,6 +68,7 @@
             <groupId>com.github.mishaninss</groupId>
             <artifactId>arma-ui-commons</artifactId>
             <version>${arma.ui.commons.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
