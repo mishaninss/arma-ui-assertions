@@ -1,11 +1,11 @@
 /*
- * Copyright 2018 Sergey Mishanin
+ * Copyright (c) 2021 Sergey Mishanin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.github.mishaninss.assertions;
+package com.github.mishaninss.arma.assertions;
 
-import com.github.mishaninss.html.elements.ArmaElement;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.AbstractObjectAssert;
 import org.assertj.core.api.CharSequenceAssert;
+import com.github.mishaninss.arma.html.elements.ArmaElement;
+import com.github.mishaninss.arma.html.elements.ElementAttribute;
 
 /**
  * Abstract base class for {@link ArmaElement} specific assertions
@@ -56,7 +57,7 @@ public abstract class AbstractArmaElementAssert<S extends AbstractArmaElementAss
 
         // check that property call/field access is true
         if (!actual.isDisplayed(shouldWait)) {
-            failWithMessage("\nExpecting that element is displayed but is not.");
+            failWithMessage("\nЭлемент не отображается");
         }
 
         // return the current assertion for method chaining
@@ -99,7 +100,17 @@ public abstract class AbstractArmaElementAssert<S extends AbstractArmaElementAss
 
     public CharSequenceAssert value() {
         CharSequenceAssert charSequenceAssert = new CharSequenceAssert(actual.readValue());
-        charSequenceAssert.as(buildDescription() + " value");
+        charSequenceAssert.as("значение элемента" + buildDescription());
+        return charSequenceAssert;
+    }
+
+    public CharSequenceAssert valueIgnoringNewLines() {
+        String actualValue = actual.readValue();
+        if (StringUtils.isNotBlank(actualValue)){
+            actualValue = actualValue.replace("\n", " ");
+        }
+        CharSequenceAssert charSequenceAssert = new CharSequenceAssert(actualValue);
+        charSequenceAssert.as("значение элемента " + buildDescription() + " без учёта переноса строки");
         return charSequenceAssert;
     }
 
@@ -121,10 +132,21 @@ public abstract class AbstractArmaElementAssert<S extends AbstractArmaElementAss
         return charSequenceAssert;
     }
 
+    public CharSequenceAssert attribute(ElementAttribute attribute) {
+        return attribute(attribute.getName());
+    }
+
     public CharSequenceAssert attribute(String attribute) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(attribute), "name of an attribure cannot be null or blank string");
+        Preconditions.checkArgument(StringUtils.isNotBlank(attribute), "name of an attribute cannot be null or blank string");
         CharSequenceAssert charSequenceAssert = new CharSequenceAssert(actual.getAttribute(attribute));
         charSequenceAssert.as(buildDescription() + " [%s] attribute", attribute);
+        return charSequenceAssert;
+    }
+
+    public CharSequenceAssert cssValue(String cssValue) {
+        Preconditions.checkArgument(StringUtils.isNotBlank(cssValue), "name of an css value cannot be null or blank string");
+        CharSequenceAssert charSequenceAssert = new CharSequenceAssert(actual.read().cssValue(cssValue));
+        charSequenceAssert.as(buildDescription() + " [%s] css value", cssValue);
         return charSequenceAssert;
     }
 
@@ -156,7 +178,7 @@ public abstract class AbstractArmaElementAssert<S extends AbstractArmaElementAss
     }
 
     private String buildDescription() {
-        return actual.getLoggableName() + " => " + actual.getLocator();
+        return actual.getLoggableName() + " => " + actual.getLocatorsPath();
     }
 
     /**

@@ -1,0 +1,12 @@
+apply from: '../arma/build-commons.gradle'
+
+description = """"""
+
+dependencies {
+    implementation "com.github.mishaninss:arma-ui-commons:${armaVersion}"
+    api(group: 'org.assertj', name: 'assertj-core', version: '3.15.0') {
+        exclude group: 'org.junit', module: 'junit-bom'
+    }
+
+    aspects "com.github.mishaninss:arma-ui-commons:${armaVersion}"
+}
