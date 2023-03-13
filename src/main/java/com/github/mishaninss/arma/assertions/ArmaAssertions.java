@@ -1,6 +1,9 @@
 package com.github.mishaninss.arma.assertions;
 
+import com.github.mishaninss.arma.html.composites.IndexedElement;
 import com.github.mishaninss.arma.html.containers.ArmaContainer;
+import com.github.mishaninss.arma.html.containers.IndexedContainer;
+import com.github.mishaninss.arma.html.containers.interfaces.IBatchElementsContainer;
 import com.github.mishaninss.arma.html.containers.table.Column;
 import com.github.mishaninss.arma.html.containers.table.Table;
 import com.github.mishaninss.arma.html.elements.ArmaElement;
@@ -48,6 +51,17 @@ public class ArmaAssertions {
   @CheckReturnValue
   public static IInteractiveElementAssert assertThat(IInteractiveElement actual) {
     return new IInteractiveElementAssert(actual);
+  }
+
+  @CheckReturnValue
+  public static ArmaIndexedElementAssert assertThat(
+      IndexedElement<? extends IInteractiveElement> actual) {
+    return new ArmaIndexedElementAssert(actual);
+  }
+
+  @CheckReturnValue
+  public static ArmaIndexedContainerAssert assertThat(IndexedContainer<?> actual) {
+    return new ArmaIndexedContainerAssert(actual);
   }
 
   /**

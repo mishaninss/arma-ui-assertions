@@ -71,7 +71,7 @@ public abstract class AbstractSelectableAssert<S extends AbstractSelectableAsser
         }
 
         if (!actual.isSelected()) {
-            failWithMessage("Элемент не отмечет");
+            failWithMessage("Элемент не отмечен");
         }
 
         return myself;
@@ -85,7 +85,7 @@ public abstract class AbstractSelectableAssert<S extends AbstractSelectableAsser
         }
 
         if (actual.isSelected()) {
-            failWithMessage("Элемент отмечет");
+            failWithMessage("Элемент отмечен");
         }
 
         return myself;
