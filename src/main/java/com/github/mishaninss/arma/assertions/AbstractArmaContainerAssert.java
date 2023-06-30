@@ -23,13 +23,13 @@ import com.github.mishaninss.arma.html.interfaces.IInteractiveElement;
 import com.github.mishaninss.arma.utils.Preconditions;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.AbstractObjectAssert;
-import org.assertj.core.api.Assertions;
-import org.assertj.core.api.SoftAssertions;
+import org.awaitility.Awaitility;
 
 /**
  * Abstract base class for {@link ArmaElement} specific assertions
@@ -86,12 +86,12 @@ public abstract class AbstractArmaContainerAssert<S extends AbstractArmaContaine
   public S isNotDisplayed(boolean shouldWait) {
     isNotNull();
 
-    if (StringUtils.isNoneBlank(descriptionText(), info.overridingErrorMessage())) {
-      as(buildDescription());
-    }
+    String message = StringUtils.isBlank(info.overridingErrorMessage()) ?
+        "Контейнер отображается: " + buildDescription() :
+        info.overridingErrorMessage();
 
     if (actual.isDisplayed(shouldWait)) {
-      failWithMessage("\nКонтейнер отображается");
+      failWithMessage(message);
     }
 
     return myself;
@@ -170,6 +170,26 @@ public abstract class AbstractArmaContainerAssert<S extends AbstractArmaContaine
             .isEqualTo(expectedValue)
     );
     softAssertions.assertAll();
+    return myself;
+  }
+
+  public S containsValues(Map<String, String> expectedValues, int timeout) {
+    isNotNull();
+    Preconditions.checkNotNull(expectedValues, "expectedValues");
+
+    if (StringUtils.isBlank(descriptionText())) {
+      as(buildDescription());
+    }
+    Awaitility.await().atMost(timeout, TimeUnit.SECONDS)
+        .untilAsserted(() -> {
+          ArmaSoftAssertions softAssertions = new ArmaSoftAssertions();
+          expectedValues.forEach((elementId, expectedValue) ->
+              softAssertions.assertThat(actual.getElement(elementId))
+                  .value()
+                  .isEqualTo(expectedValue)
+          );
+          softAssertions.assertAll();
+        });
     return myself;
   }
 

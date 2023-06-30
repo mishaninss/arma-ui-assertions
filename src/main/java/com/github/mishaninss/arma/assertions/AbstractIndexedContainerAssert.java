@@ -69,6 +69,19 @@ public abstract class AbstractIndexedContainerAssert<S extends AbstractIndexedCo
     return myself;
   }
 
+  public S doesNotContainAny(List<Map<String, String>> expected) {
+    isNotNull();
+
+    if (StringUtils.isNoneBlank(descriptionText(), info.overridingErrorMessage())) {
+      as("Values of %s", buildDescription());
+    }
+
+    List<Map<String, String>> act = actual.readAll(expected.get(0).keySet());
+    Assertions.assertThat(act).doesNotContainAnyElementsOf(DataObject.sanitizeKeys(expected));
+
+    return myself;
+  }
+
   public S containsIgnoreCase(Map<String, String> expected) {
     isNotNull();
 
